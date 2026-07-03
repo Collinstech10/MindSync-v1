@@ -1,0 +1,6 @@
+{
+  "name": "Mindsync",
+  "description": "An offline-first, tactical cognitive reframing and exposure therapy console that helps users deconstruct worries, log somatic biometrics, and build resilience.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
