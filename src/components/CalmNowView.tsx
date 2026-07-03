@@ -26,6 +26,9 @@ class BreatheSoundSynth {
 
     try {
       this.ctx = new AudioContextClass();
+      if (this.ctx.state === "suspended") {
+        this.ctx.resume();
+      }
 
       // --- Brown Noise Setup (gentle physical breathing air) ---
       const bufferSize = 3 * this.ctx.sampleRate;
@@ -117,31 +120,38 @@ class BreatheSoundSynth {
 
     if (phase === "Inhale") {
       // Inhalation: Senses opening, sound rising smoothly
-      this.filterNode?.frequency.setValueAtTime(this.filterNode.frequency.value, now);
+      const currentFreq = this.filterNode ? this.filterNode.frequency.value : 250;
+      this.filterNode?.frequency.setValueAtTime(currentFreq, now);
       this.filterNode?.frequency.exponentialRampToValueAtTime(620, now + duration);
 
-      this.gainNode?.gain.setValueAtTime(this.gainNode.gain.value, now);
+      const currentGain = this.gainNode ? this.gainNode.gain.value : 0;
+      this.gainNode?.gain.setValueAtTime(currentGain, now);
       this.gainNode?.gain.linearRampToValueAtTime(0.18 * this.volume, now + duration);
 
       this.toneOsc?.frequency.setValueAtTime(110, now);
       this.toneOsc?.frequency.linearRampToValueAtTime(118, now + duration);
 
-      this.toneGainNode?.gain.setValueAtTime(this.toneGainNode.gain.value, now);
+      const currentToneGain = this.toneGainNode ? this.toneGainNode.gain.value : 0;
+      this.toneGainNode?.gain.setValueAtTime(currentToneGain, now);
       this.toneGainNode?.gain.linearRampToValueAtTime(0.24 * this.volume, now + duration);
 
     } else if (phase === "Exhale") {
       // Exhalation: Releasing tension, sound falling and fading
-      this.filterNode?.frequency.setValueAtTime(this.filterNode.frequency.value, now);
+      const currentFreq = this.filterNode ? this.filterNode.frequency.value : 450;
+      this.filterNode?.frequency.setValueAtTime(currentFreq, now);
       this.filterNode?.frequency.exponentialRampToValueAtTime(150, now + duration);
 
-      this.gainNode?.gain.setValueAtTime(this.gainNode.gain.value, now);
+      const currentGain = this.gainNode ? this.gainNode.gain.value : 0;
+      this.gainNode?.gain.setValueAtTime(currentGain, now);
       this.gainNode?.gain.linearRampToValueAtTime(0.05 * this.volume, now + duration - 0.8);
       this.gainNode?.gain.linearRampToValueAtTime(0.001, now + duration);
 
-      this.toneOsc?.frequency.setValueAtTime(this.toneOsc.frequency.value, now);
+      const currentToneFreq = this.toneOsc ? this.toneOsc.frequency.value : 110;
+      this.toneOsc?.frequency.setValueAtTime(currentToneFreq, now);
       this.toneOsc?.frequency.linearRampToValueAtTime(95, now + duration);
 
-      this.toneGainNode?.gain.setValueAtTime(this.toneGainNode.gain.value, now);
+      const currentToneGain = this.toneGainNode ? this.toneGainNode.gain.value : 0;
+      this.toneGainNode?.gain.setValueAtTime(currentToneGain, now);
       this.toneGainNode?.gain.linearRampToValueAtTime(0.08 * this.volume, now + duration - 0.8);
       this.toneGainNode?.gain.linearRampToValueAtTime(0.001, now + duration);
 
@@ -149,20 +159,24 @@ class BreatheSoundSynth {
       // Hold breath: Very soft comforting, steady micro-drone
       this.filterNode?.frequency.setTargetAtTime(300, now, 0.8);
       
-      this.gainNode?.gain.setValueAtTime(this.gainNode.gain.value, now);
+      const currentGain = this.gainNode ? this.gainNode.gain.value : 0;
+      this.gainNode?.gain.setValueAtTime(currentGain, now);
       this.gainNode?.gain.linearRampToValueAtTime(0.02 * this.volume, now + 1.0);
 
       this.toneOsc?.frequency.setTargetAtTime(110, now, 0.8);
       
-      this.toneGainNode?.gain.setValueAtTime(this.toneGainNode.gain.value, now);
+      const currentToneGain = this.toneGainNode ? this.toneGainNode.gain.value : 0;
+      this.toneGainNode?.gain.setValueAtTime(currentToneGain, now);
       this.toneGainNode?.gain.linearRampToValueAtTime(0.08 * this.volume, now + 1.0);
 
     } else {
       // Hold (Rest): Complete calm pause
-      this.gainNode?.gain.setValueAtTime(this.gainNode.gain.value, now);
+      const currentGain = this.gainNode ? this.gainNode.gain.value : 0;
+      this.gainNode?.gain.setValueAtTime(currentGain, now);
       this.gainNode?.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
 
-      this.toneGainNode?.gain.setValueAtTime(this.toneGainNode.gain.value, now);
+      const currentToneGain = this.toneGainNode ? this.toneGainNode.gain.value : 0;
+      this.toneGainNode?.gain.setValueAtTime(currentToneGain, now);
       this.toneGainNode?.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
     }
   }
@@ -437,9 +451,21 @@ export default function CalmNowView({ onLogSession, showToast }: CalmNowViewProp
                   {breathePhase === "Hold (Rest)" && "Pause before starting the next breathing cycle."}
                 </p>
 
-                <div className="flex gap-4 justify-center items-center">
+                 <div className="flex gap-4 justify-center items-center">
                   <button
-                    onClick={() => setIsBreatheActive(!isBreatheActive)}
+                    onClick={() => {
+                      const nextBreatheActive = !isBreatheActive;
+                      setIsBreatheActive(nextBreatheActive);
+                      if (nextBreatheActive) {
+                        if (!isMuted) {
+                          synthRef.current?.init();
+                          synthRef.current?.setMuted(false);
+                          synthRef.current?.triggerPhase(breathePhase, 4);
+                        }
+                      } else {
+                        synthRef.current?.stop();
+                      }
+                    }}
                     className="px-6 py-2.5 rounded-full bg-slate-900 border border-slate-800 text-slate-300 font-bold text-xs hover:bg-slate-800 transition-all cursor-pointer flex items-center gap-2"
                   >
                     {isBreatheActive ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
@@ -450,6 +476,11 @@ export default function CalmNowView({ onLogSession, showToast }: CalmNowViewProp
                       setTimeLeft(4);
                       setBreathePhase("Inhale");
                       setBreathsCompleted(0);
+                      if (isBreatheActive && !isMuted) {
+                        synthRef.current?.init();
+                        synthRef.current?.setMuted(false);
+                        synthRef.current?.triggerPhase("Inhale", 4);
+                      }
                     }}
                     title="Reset session"
                     className="p-2.5 rounded-full bg-slate-900 border border-slate-800 text-slate-500 hover:text-slate-300 transition-all cursor-pointer"
@@ -458,9 +489,17 @@ export default function CalmNowView({ onLogSession, showToast }: CalmNowViewProp
                   </button>
                   <button
                     onClick={() => {
-                      setIsMuted(!isMuted);
+                      const nextMute = !isMuted;
+                      setIsMuted(nextMute);
+                      if (!nextMute) {
+                        synthRef.current?.init();
+                        synthRef.current?.setMuted(false);
+                        synthRef.current?.triggerPhase(breathePhase, 4);
+                      } else {
+                        synthRef.current?.stop();
+                      }
                       if (showToast) {
-                        showToast(!isMuted ? "Breathing sound muted." : "Breathing sound enabled. Take a deep breath.", "info");
+                        showToast(nextMute ? "Breathing sound muted." : "Breathing sound enabled. Take a deep breath.", "info");
                       }
                     }}
                     title={isMuted ? "Unmute breathing sounds" : "Mute breathing sounds"}

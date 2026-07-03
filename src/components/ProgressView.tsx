@@ -2,6 +2,46 @@ import React from "react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts";
 import { ThoughtBattle, MoodCheckIn, SessionLog } from "../types";
 import { Award, Compass, Clock, Zap, Heart, Trash2, Calendar } from "lucide-react";
+import { motion } from "motion/react";
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.12,
+      delayChildren: 0.05,
+    },
+  },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      type: "spring",
+      stiffness: 75,
+      damping: 15,
+    },
+  },
+};
+
+const chartCardVariants = {
+  hidden: { opacity: 0, scale: 0.98, y: 25 },
+  visible: {
+    opacity: 1,
+    scale: 1,
+    y: 0,
+    transition: {
+      type: "spring",
+      stiffness: 60,
+      damping: 18,
+      delay: 0.15,
+    },
+  },
+};
 
 const CustomTooltip = ({ active, payload, label }: any) => {
   if (active && payload && payload.length) {
@@ -104,9 +144,14 @@ export default function ProgressView({ battles, checkIns, sessions, onClearHisto
   const displayData = hasRealData ? checkInGraphData : generateFallbackData();
 
   return (
-    <div className="space-y-10 animate-fade-in">
+    <motion.div
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+      className="space-y-10"
+    >
       {/* Inspirational Quote Header */}
-      <div className="text-center max-w-2xl mx-auto py-4 space-y-3">
+      <motion.div variants={itemVariants} className="text-center max-w-2xl mx-auto py-4 space-y-3">
         <span className="text-xs uppercase tracking-widest text-[#57f1db] font-bold">
           Progress Insights
         </span>
@@ -116,11 +161,26 @@ export default function ProgressView({ battles, checkIns, sessions, onClearHisto
         <p className="text-xs font-mono uppercase tracking-widest text-slate-500 font-semibold">
           Mindsync Personal Guide • Secure
         </p>
-      </div>
+      </motion.div>
 
       {/* KPI Dashboard */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <div className="bg-slate-900/40 border border-slate-800/80 rounded-3xl p-6 space-y-4">
+      <motion.div 
+        variants={{
+          hidden: { opacity: 0 },
+          visible: {
+            opacity: 1,
+            transition: {
+              staggerChildren: 0.08
+            }
+          }
+        }}
+        className="grid grid-cols-1 md:grid-cols-4 gap-6"
+      >
+        <motion.div 
+          variants={itemVariants} 
+          whileHover={{ y: -4, borderColor: "rgba(87, 241, 219, 0.3)" }}
+          className="bg-slate-900/40 border border-slate-800/80 rounded-3xl p-6 space-y-4 transition-colors"
+        >
           <div className="flex justify-between items-center text-[#57f1db]">
             <Award className="w-5 h-5" />
             <span className="text-[10px] font-mono uppercase tracking-wider font-bold">Reframed</span>
@@ -129,9 +189,13 @@ export default function ProgressView({ battles, checkIns, sessions, onClearHisto
             <div className="text-4xl font-black text-white">{totalBattles}</div>
             <p className="text-xs text-slate-400 mt-1">Thought reframes completed</p>
           </div>
-        </div>
+        </motion.div>
 
-        <div className="bg-slate-900/40 border border-slate-800/80 rounded-3xl p-6 space-y-4">
+        <motion.div 
+          variants={itemVariants} 
+          whileHover={{ y: -4, borderColor: "rgba(206, 189, 255, 0.3)" }}
+          className="bg-slate-900/40 border border-slate-800/80 rounded-3xl p-6 space-y-4 transition-colors"
+        >
           <div className="flex justify-between items-center text-[#cebdff]">
             <Zap className="w-5 h-5" />
             <span className="text-[10px] font-mono uppercase tracking-wider font-bold">Anxiety Drop</span>
@@ -140,9 +204,13 @@ export default function ProgressView({ battles, checkIns, sessions, onClearHisto
             <div className="text-4xl font-black text-white">-{averageAnxietyReduction}%</div>
             <p className="text-xs text-slate-400 mt-1">Avg anxiety reduction</p>
           </div>
-        </div>
+        </motion.div>
 
-        <div className="bg-slate-900/40 border border-slate-800/80 rounded-3xl p-6 space-y-4">
+        <motion.div 
+          variants={itemVariants} 
+          whileHover={{ y: -4, borderColor: "rgba(34, 211, 238, 0.3)" }}
+          className="bg-slate-900/40 border border-slate-800/80 rounded-3xl p-6 space-y-4 transition-colors"
+        >
           <div className="flex justify-between items-center text-cyan-400">
             <Clock className="w-5 h-5" />
             <span className="text-[10px] font-mono uppercase tracking-wider font-bold">Mindfulness</span>
@@ -151,9 +219,13 @@ export default function ProgressView({ battles, checkIns, sessions, onClearHisto
             <div className="text-4xl font-black text-white">{totalSessions}</div>
             <p className="text-xs text-slate-400 mt-1">Calm & grounding rounds</p>
           </div>
-        </div>
+        </motion.div>
 
-        <div className="bg-slate-900/40 border border-slate-800/80 rounded-3xl p-6 space-y-4">
+        <motion.div 
+          variants={itemVariants} 
+          whileHover={{ y: -4, borderColor: "rgba(52, 211, 153, 0.3)" }}
+          className="bg-slate-900/40 border border-slate-800/80 rounded-3xl p-6 space-y-4 transition-colors"
+        >
           <div className="flex justify-between items-center text-emerald-400">
             <Heart className="w-5 h-5" />
             <span className="text-[10px] font-mono uppercase tracking-wider font-bold">Logging</span>
@@ -164,17 +236,24 @@ export default function ProgressView({ battles, checkIns, sessions, onClearHisto
             </div>
             <p className="text-xs text-slate-400 mt-1">Daily check-in logs</p>
           </div>
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
 
       {/* Chart Segment */}
-      <div className="bg-slate-900/40 border border-slate-800/80 rounded-3xl p-6">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+      <motion.div 
+        variants={chartCardVariants} 
+        className="bg-slate-900/40 border border-slate-800/80 rounded-3xl p-6 relative overflow-hidden group shadow-2xl"
+      >
+        {/* Glowing radial ambient backdrops */}
+        <div className="absolute top-0 right-0 -mr-16 -mt-16 w-64 h-64 bg-emerald-500/5 rounded-full blur-3xl pointer-events-none group-hover:bg-emerald-500/10 transition-all duration-1000" />
+        <div className="absolute bottom-0 left-0 -ml-16 -mb-16 w-64 h-64 bg-indigo-500/5 rounded-full blur-3xl pointer-events-none group-hover:bg-indigo-500/10 transition-all duration-1000" />
+
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 relative z-10">
           <div>
             <h3 className="text-lg font-bold text-white">30-Day Mood & Anxiety Trend</h3>
             <p className="text-xs text-slate-400">A visual guide of your self-reported anxiety and energy levels over time.</p>
           </div>
-          <span className={`text-[10px] font-mono px-3 py-1 rounded-full uppercase tracking-wider ${
+          <span className={`text-[10px] font-mono px-3 py-1 rounded-full uppercase tracking-wider relative z-10 ${
             hasRealData 
               ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" 
               : "bg-slate-800 text-slate-400"
@@ -183,7 +262,7 @@ export default function ProgressView({ battles, checkIns, sessions, onClearHisto
           </span>
         </div>
 
-        <div className="h-72 w-full">
+        <div className="h-72 w-full relative z-10">
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={displayData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" opacity={0.3} />
@@ -204,6 +283,9 @@ export default function ProgressView({ battles, checkIns, sessions, onClearHisto
                 strokeWidth={3}
                 activeDot={{ r: 6 }}
                 dot={{ r: 3, strokeWidth: 1 }}
+                isAnimationActive={true}
+                animationDuration={2200}
+                animationEasing="ease-out"
               />
               <Line
                 type="monotone"
@@ -213,14 +295,17 @@ export default function ProgressView({ battles, checkIns, sessions, onClearHisto
                 strokeWidth={3}
                 activeDot={{ r: 6 }}
                 dot={{ r: 3, strokeWidth: 1 }}
+                isAnimationActive={true}
+                animationDuration={2200}
+                animationEasing="ease-out"
               />
             </LineChart>
           </ResponsiveContainer>
         </div>
-      </div>
+      </motion.div>
 
       {/* Unified Timeline / History */}
-      <div className="bg-slate-900/40 border border-slate-800/80 rounded-3xl p-6">
+      <motion.div variants={itemVariants} className="bg-slate-900/40 border border-slate-800/80 rounded-3xl p-6">
         <div className="flex justify-between items-center border-b border-slate-800/60 pb-4 mb-6">
           <h3 className="text-lg font-bold text-white">Activity Journal History</h3>
           <button
@@ -317,7 +402,7 @@ export default function ProgressView({ battles, checkIns, sessions, onClearHisto
             </div>
           )}
         </div>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 }
