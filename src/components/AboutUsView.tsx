@@ -17,6 +17,7 @@ import {
   Sparkles,
   ExternalLink
 } from "lucide-react";
+import temiJohnsonImg from "../assets/images/temi.jpg.png";
 
 interface GroupMember {
   sn: number;
@@ -29,6 +30,7 @@ interface GroupMember {
   contribution: string;
   roleBadge?: string;
   colorTheme: string; // Tailwind tint class
+  imageUrl?: string;
 }
 
 const MEMBERS_DATA: GroupMember[] = [
@@ -43,6 +45,7 @@ const MEMBERS_DATA: GroupMember[] = [
     contribution: "He served as our lead tech support, engineered the core application, resolved bugs, and guided all group members on the end-to-end steps of creating and operating this app.",
     roleBadge: "Tech Support & Lead Developer",
     colorTheme: "from-cyan-500/20 to-teal-500/10 border-cyan-500/40 text-[#57f1db]",
+    imageUrl: temiJohnsonImg,
   },
   {
     sn: 2,
@@ -64,7 +67,7 @@ const MEMBERS_DATA: GroupMember[] = [
     phone: "07057547753",
     email: "favourilori312@gmail.com",
     domainName: "InfiTech.com.ng",
-    contribution: "Served as the official group leader, coordinated group communication channels, and kept energy and spirits high during project intervals.",
+    contribution: "As the group leader, he was playing with girls.",
     roleBadge: "Group Leader",
     colorTheme: "from-blue-500/20 to-slate-500/10 border-blue-500/40 text-blue-400",
   },
@@ -332,92 +335,128 @@ export default function AboutUsView() {
           >
             {filteredMembers.map((member, index) => {
               const isKeyRank = member.sn <= 2;
+              const isTemi = member.sn === 1;
               return (
                 <motion.div
                   key={member.matricNo}
                   variants={cardVariants}
-                  whileHover={{ y: -5, borderColor: "rgba(87, 241, 219, 0.25)" }}
-                  className="bg-[#0b0f19]/60 border border-slate-800/80 rounded-3xl p-6 relative overflow-hidden flex flex-col justify-between transition-all shadow-xl group"
+                  whileHover={{ y: -5, borderColor: isTemi ? "rgba(87, 241, 219, 0.55)" : "rgba(87, 241, 219, 0.25)" }}
+                  className={`bg-[#0b0f19]/60 border rounded-3xl p-6 relative overflow-hidden flex flex-col justify-between transition-all shadow-xl group ${
+                    isTemi 
+                      ? "md:col-span-2 lg:col-span-3 border-[#57f1db]/40 bg-gradient-to-r from-[#0e1627] to-[#070b13]" 
+                      : "border-slate-800/80"
+                  }`}
                 >
                   {/* Visual Background Glow for key members */}
                   {isKeyRank && (
                     <div className="absolute top-0 right-0 -mr-12 -mt-12 w-32 h-32 bg-cyan-500/5 rounded-full blur-2xl group-hover:bg-cyan-500/10 transition-all duration-700 pointer-events-none" />
                   )}
 
-                  <div className="space-y-4">
-                    {/* Header */}
-                    <div className="flex justify-between items-start">
-                      <div className="flex items-center gap-3">
-                        <div className={`p-2.5 rounded-2xl bg-gradient-to-br ${member.colorTheme} border shrink-0 flex items-center justify-center`}>
-                          {isKeyRank ? <Star className="w-5 h-5 fill-current" /> : <User className="w-5 h-5" />}
-                        </div>
-                        <div>
-                          <div className="text-[10px] font-mono text-slate-500 font-extrabold uppercase tracking-widest">
-                            S/N {member.sn}
-                          </div>
-                          <div className="text-xs font-mono text-slate-400 font-bold">
-                            {member.matricNo}
-                          </div>
-                        </div>
-                      </div>
-
-                      {member.roleBadge && (
-                        <span className={`text-[9px] font-mono px-2 py-0.5 rounded-md border tracking-wider font-extrabold uppercase ${member.colorTheme}`}>
-                          {member.roleBadge}
-                        </span>
-                      )}
-                    </div>
-
-                    {/* Member Name */}
-                    <div>
-                      <h4 className="text-base font-black text-white tracking-tight group-hover:text-[#57f1db] transition-colors">
-                        {member.fullName}
-                      </h4>
-                      <p className="text-[10px] font-mono text-slate-500 uppercase tracking-wide mt-1 flex items-center gap-1.5">
-                        <BookOpen className="w-3.5 h-3.5 text-slate-600" />
-                        {member.programme}
-                      </p>
-                    </div>
-
-                    {/* Divider */}
-                    <div className="h-px bg-slate-800/60" />
-
-                    {/* Contribution */}
-                    <div>
-                      <span className="text-[9px] font-mono text-slate-500 uppercase tracking-widest font-bold block mb-1">
-                        PROJECT CONTRIBUTION
-                      </span>
-                      <p className="text-xs text-slate-300 leading-relaxed font-sans min-h-[5rem]">
-                        {member.contribution}
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Contact Info Footer Panel */}
-                  <div className="mt-6 pt-4 border-t border-slate-900/80 space-y-2 text-[11px] font-mono text-slate-400">
-                    <a
-                      href={`mailto:${member.email}`}
-                      className="flex items-center gap-2 hover:text-[#57f1db] transition-colors"
-                    >
-                      <Mail className="w-3.5 h-3.5 text-slate-600 shrink-0" />
-                      <span className="truncate">{member.email}</span>
-                    </a>
-                    
-                    <a
-                      href={`tel:${member.phone}`}
-                      className="flex items-center gap-2 hover:text-[#57f1db] transition-colors"
-                    >
-                      <Phone className="w-3.5 h-3.5 text-slate-600 shrink-0" />
-                      <span>{member.phone}</span>
-                    </a>
-
-                    {member.domainName && (
-                      <div className="flex items-center gap-2 text-[#57f1db]/90 hover:text-white transition-all pt-1">
-                        <Globe className="w-3.5 h-3.5 text-[#57f1db]/40 shrink-0" />
-                        <span className="truncate font-semibold">{member.domainName}</span>
-                        <ExternalLink className="w-2.5 h-2.5 text-[#57f1db]/60 shrink-0 ml-auto opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <div className={`space-y-4 ${isTemi ? "flex flex-col md:flex-row gap-6 items-stretch space-y-0" : ""}`}>
+                    {/* Left: Picture (Temi Johnson selfie exact crop) */}
+                    {isTemi && member.imageUrl && (
+                      <div className="w-full md:w-56 h-72 md:h-auto min-h-[220px] rounded-2xl overflow-hidden border border-[#57f1db]/30 shrink-0 shadow-2xl relative bg-slate-950 flex items-center justify-center">
+                        <img 
+                          src={member.imageUrl} 
+                          alt={member.fullName} 
+                          className="w-full h-full object-cover object-top hover:scale-105 transition-transform duration-500"
+                          referrerPolicy="no-referrer"
+                        />
+                        <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/80 to-transparent pointer-events-none" />
                       </div>
                     )}
+
+                    {/* Right / Main Content */}
+                    <div className="flex-1 flex flex-col justify-between space-y-4">
+                      <div>
+                        {/* Header */}
+                        <div className="flex justify-between items-start mb-3">
+                          <div className="flex items-center gap-3">
+                            {!isTemi && member.imageUrl ? (
+                              <div className="w-20 h-20 rounded-2xl overflow-hidden border border-slate-700/80 shrink-0 shadow-xl bg-slate-900 flex items-center justify-center">
+                                <img 
+                                  src={member.imageUrl} 
+                                  alt={member.fullName} 
+                                  className="w-full h-full object-cover object-top"
+                                  referrerPolicy="no-referrer"
+                                />
+                              </div>
+                            ) : !isTemi ? (
+                              <div className={`p-2.5 rounded-2xl bg-gradient-to-br ${member.colorTheme} border shrink-0 flex items-center justify-center`}>
+                                {isKeyRank ? <Star className="w-5 h-5 fill-current" /> : <User className="w-5 h-5" />}
+                              </div>
+                            ) : null}
+                            <div>
+                              <div className="text-[10px] font-mono text-slate-500 font-extrabold uppercase tracking-widest">
+                                S/N {member.sn}
+                              </div>
+                              <div className="text-xs font-mono text-slate-400 font-bold">
+                                {member.matricNo}
+                              </div>
+                            </div>
+                          </div>
+
+                          {member.roleBadge && (
+                            <span className={`text-[9px] font-mono px-2 py-0.5 rounded-md border tracking-wider font-extrabold uppercase ${member.colorTheme}`}>
+                              {member.roleBadge}
+                            </span>
+                          )}
+                        </div>
+
+                        {/* Member Name */}
+                        <div>
+                          <h4 className={`font-black text-white tracking-tight group-hover:text-[#57f1db] transition-colors ${isTemi ? "text-xl md:text-2xl" : "text-base"}`}>
+                            {member.fullName}
+                          </h4>
+                          <p className="text-[10px] font-mono text-slate-500 uppercase tracking-wide mt-1 flex items-center gap-1.5">
+                            <BookOpen className="w-3.5 h-3.5 text-slate-600" />
+                            {member.programme}
+                          </p>
+                        </div>
+
+                        {/* Divider */}
+                        <div className="h-px bg-slate-800/60 my-3" />
+
+                        {/* Contribution */}
+                        <div>
+                          <span className="text-[9px] font-mono text-slate-500 uppercase tracking-widest font-bold block mb-1">
+                            PROJECT CONTRIBUTION
+                          </span>
+                          <p className={`text-slate-300 leading-relaxed font-sans ${isTemi ? "text-sm" : "text-xs min-h-[5rem]"}`}>
+                            {member.contribution}
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Contact Info Footer Panel */}
+                      <div className="pt-4 border-t border-slate-900/80 space-y-2 text-[11px] font-mono text-slate-400">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                          <a
+                            href={`mailto:${member.email}`}
+                            className="flex items-center gap-2 hover:text-[#57f1db] transition-colors"
+                          >
+                            <Mail className="w-3.5 h-3.5 text-slate-600 shrink-0" />
+                            <span className="truncate">{member.email}</span>
+                          </a>
+                          
+                          <a
+                            href={`tel:${member.phone}`}
+                            className="flex items-center gap-2 hover:text-[#57f1db] transition-colors"
+                          >
+                            <Phone className="w-3.5 h-3.5 text-slate-600 shrink-0" />
+                            <span>{member.phone}</span>
+                          </a>
+                        </div>
+
+                        {member.domainName && (
+                          <div className="flex items-center gap-2 text-[#57f1db]/90 hover:text-white transition-all pt-1 border-t border-slate-900/40">
+                            <Globe className="w-3.5 h-3.5 text-[#57f1db]/40 shrink-0" />
+                            <span className="truncate font-semibold">{member.domainName}</span>
+                            <ExternalLink className="w-2.5 h-2.5 text-[#57f1db]/60 shrink-0 ml-auto opacity-0 group-hover:opacity-100 transition-opacity" />
+                          </div>
+                        )}
+                      </div>
+                    </div>
                   </div>
                 </motion.div>
               );
@@ -461,6 +500,14 @@ export default function AboutUsView() {
                       <td className="py-4 px-6 font-mono font-bold text-slate-500">{member.sn}</td>
                       <td className="py-4 px-6">
                         <div className="font-bold text-white flex items-center gap-2">
+                          {member.imageUrl && (
+                            <img 
+                              src={member.imageUrl} 
+                              alt={member.fullName} 
+                              className="w-10 h-10 rounded-full object-cover object-top border border-slate-700/80 shrink-0"
+                              referrerPolicy="no-referrer"
+                            />
+                          )}
                           {member.fullName}
                           {member.sn <= 2 && (
                             <span className="w-1.5 h-1.5 bg-[#57f1db] rounded-full animate-pulse" />
