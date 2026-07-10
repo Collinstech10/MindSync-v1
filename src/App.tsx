@@ -8,6 +8,7 @@ import ThoughtBattleView from "./components/ThoughtBattleView";
 import MissionsView from "./components/MissionsView";
 import ProgressView from "./components/ProgressView";
 import SettingsView from "./components/SettingsView";
+import AboutUsView from "./components/AboutUsView";
 import EmergencyModal from "./components/EmergencyModal";
 import MindsyncLogo from "./components/MindsyncLogo";
 import { ThoughtBattle, Mission, MoodCheckIn, AppSettings, SessionLog } from "./types";
@@ -412,6 +413,10 @@ export default function App() {
               sessions={sessions}
               onClearHistory={handleClearHistory}
             />
+          )}
+
+          {activeTab === "about" && (
+            <AboutUsView />
           )}
 
           {activeTab === "settings" && (

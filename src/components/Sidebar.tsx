@@ -9,6 +9,7 @@ import {
   Settings,
   AlertOctagon,
   X,
+  Users,
 } from "lucide-react";
 import MindsyncLogo from "./MindsyncLogo";
 
@@ -34,6 +35,7 @@ export default function Sidebar({
     { id: "battle", label: "Thought Reframe", icon: Brain },
     { id: "missions", label: "Small Steps", icon: Compass },
     { id: "progress", label: "Progress Insights", icon: LineChart },
+    { id: "about", label: "About Us", icon: Users },
     { id: "settings", label: "Settings", icon: Settings },
   ];
 
