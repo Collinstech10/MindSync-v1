@@ -12,6 +12,9 @@ import {
   Calendar
 } from "lucide-react";
 
+// Import the official cover art image provided by the user
+import fineGirlCover from "../assets/images/FGE.png";
+
 interface ExhibitionSong {
   id: string;
   title: string;
@@ -20,6 +23,7 @@ interface ExhibitionSong {
   contributor: string;
   category: string;
   description: string;
+  coverImage?: string;
   createdAt: string;
 }
 
@@ -34,6 +38,7 @@ const DEFAULT_SONGS: ExhibitionSong[] = [
     contributor: "TEMI JOHNSON AYOBAMIDELE ENIOLA",
     category: "Afropop / Afrobeat",
     description: "An absolute banger! 'Fine Girl Energy' is a vibrant, melodic Nigerian Afropop love song created by Temi Johnson. Driven by infectious syncopated drums, brilliant rhythm guitars, and extremely catchy, warm, romantic melodies, this track brings ultimate positive energy and creative musical excellence to our group exhibition stage.",
+    coverImage: fineGirlCover,
     createdAt: "2026-07-12T07:40:00.000Z"
   }
 ];
@@ -126,16 +131,38 @@ export default function ExhibitionSongsView() {
           {/* Active Player (Left/Top) */}
           <div className="col-span-12 lg:col-span-8 space-y-5">
             <div className="bg-[#0b0f19]/40 border border-slate-800/80 rounded-3xl p-5 shadow-2xl relative overflow-hidden group">
-              {/* YouTube Responsive Video Container */}
-              <div className="aspect-video w-full rounded-2xl overflow-hidden bg-slate-950 border border-slate-800/80 relative shadow-inner">
-                <iframe
-                  src={`https://www.youtube.com/embed/${activeSong.videoId}?autoplay=0&rel=0&modestbranding=1`}
-                  title={activeSong.title}
-                  className="w-full h-full"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                  allowFullScreen
-                  referrerPolicy="no-referrer"
-                />
+              
+              {/* Responsive Layout for Media */}
+              <div className="grid grid-cols-1 md:grid-cols-12 gap-5 items-stretch">
+                {/* YouTube Responsive Video Container */}
+                <div className="md:col-span-7 aspect-video w-full rounded-2xl overflow-hidden bg-slate-950 border border-slate-800/80 relative shadow-inner flex items-center justify-center">
+                  <iframe
+                    src={`https://www.youtube.com/embed/${activeSong.videoId}?autoplay=0&rel=0&modestbranding=1`}
+                    title={activeSong.title}
+                    className="w-full h-full"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowFullScreen
+                    referrerPolicy="no-referrer"
+                  />
+                </div>
+
+                {/* Official Cover Art Display */}
+                {activeSong.coverImage && (
+                  <div className="md:col-span-5 flex flex-col justify-center">
+                    <div className="relative rounded-2xl overflow-hidden border border-slate-800/80 shadow-lg group-hover:border-[#57f1db]/30 transition-all duration-300 h-full max-h-[220px] md:max-h-full">
+                      <img
+                        src={activeSong.coverImage}
+                        alt="Fine Girl Energy Cover Art"
+                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        referrerPolicy="no-referrer"
+                      />
+                      {/* Premium Overlay Badge */}
+                      <div className="absolute top-3 right-3 bg-black/80 backdrop-blur-md border border-slate-800/60 text-[9px] font-mono font-extrabold text-[#57f1db] px-2.5 py-1 rounded-full uppercase tracking-wider">
+                        Official Cover Art
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Title & Contributor Metas */}
@@ -211,12 +238,30 @@ export default function ExhibitionSongsView() {
                     {/* Top Row */}
                     <div className="flex items-start gap-3">
                       <div className="relative shrink-0">
-                        {/* Fake Thumbnail style */}
-                        <div className="w-16 h-12 rounded-lg bg-slate-900 border border-slate-800 flex items-center justify-center overflow-hidden">
-                          {isActive ? (
-                            <Volume2 className="w-5 h-5 text-[#57f1db] animate-pulse" />
+                        {/* Real Thumbnail with Hover Play Overlay */}
+                        <div className="w-16 h-12 rounded-lg bg-slate-900 border border-slate-800 flex items-center justify-center overflow-hidden relative shadow-inner">
+                          {song.coverImage ? (
+                            <>
+                              <img
+                                src={song.coverImage}
+                                alt={song.title}
+                                className="w-full h-full object-cover"
+                                referrerPolicy="no-referrer"
+                              />
+                              <div className={`absolute inset-0 flex items-center justify-center bg-black/50 transition-opacity ${isActive ? "opacity-100" : "opacity-0 group-hover:opacity-100"}`}>
+                                {isActive ? (
+                                  <Volume2 className="w-4 h-4 text-[#57f1db] animate-pulse" />
+                                ) : (
+                                  <Play className="w-4 h-4 text-white" />
+                                )}
+                              </div>
+                            </>
                           ) : (
-                            <Play className="w-5 h-5 text-slate-500 group-hover:text-slate-300 transition-colors" />
+                            isActive ? (
+                              <Volume2 className="w-5 h-5 text-[#57f1db] animate-pulse" />
+                            ) : (
+                              <Play className="w-5 h-5 text-slate-500 group-hover:text-slate-300 transition-colors" />
+                            )
                           )}
                         </div>
                       </div>
