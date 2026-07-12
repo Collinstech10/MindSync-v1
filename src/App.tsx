@@ -9,6 +9,7 @@ import MissionsView from "./components/MissionsView";
 import ProgressView from "./components/ProgressView";
 import SettingsView from "./components/SettingsView";
 import AboutUsView from "./components/AboutUsView";
+import ExhibitionSongsView from "./components/ExhibitionSongsView";
 import EmergencyModal from "./components/EmergencyModal";
 import MindsyncLogo from "./components/MindsyncLogo";
 import { ThoughtBattle, Mission, MoodCheckIn, AppSettings, SessionLog } from "./types";
@@ -417,6 +418,10 @@ export default function App() {
 
           {activeTab === "about" && (
             <AboutUsView />
+          )}
+
+          {activeTab === "songs" && (
+            <ExhibitionSongsView />
           )}
 
           {activeTab === "settings" && (
