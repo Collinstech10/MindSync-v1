@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Menu, AlertOctagon, CheckCircle2, AlertTriangle, X, Info } from "lucide-react";
+import { Menu, AlertOctagon, CheckCircle2, AlertTriangle, X, Info, Lock } from "lucide-react";
 import Sidebar from "./components/Sidebar";
 import HomeView from "./components/HomeView";
 import CalmNowView from "./components/CalmNowView";
@@ -9,8 +9,10 @@ import MissionsView from "./components/MissionsView";
 import ProgressView from "./components/ProgressView";
 import SettingsView from "./components/SettingsView";
 import AboutUsView from "./components/AboutUsView";
-import ExhibitionSongsView from "./components/ExhibitionSongsView";
 import EmergencyModal from "./components/EmergencyModal";
+import PinLockModal from "./components/PinLockModal";
+import ReminderNotificationModal from "./components/ReminderNotificationModal";
+import WelcomeScreen from "./components/WelcomeScreen";
 import MindsyncLogo from "./components/MindsyncLogo";
 import { ThoughtBattle, Mission, MoodCheckIn, AppSettings, SessionLog } from "./types";
 import { motion, AnimatePresence } from "motion/react";
@@ -135,6 +137,13 @@ export default function App() {
   const [settings, setSettings] = useState<AppSettings>(DEFAULT_SETTINGS);
   const [isEmergencyOpen, setIsEmergencyOpen] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  
+  // PIN lock & Reminder & Welcome states
+  const [isWelcomeOpen, setIsWelcomeOpen] = useState<boolean>(true);
+  const [isAppLocked, setIsAppLocked] = useState<boolean>(false);
+  const [isSettingPinOpen, setIsSettingPinOpen] = useState<boolean>(false);
+  const [isReminderModalOpen, setIsReminderModalOpen] = useState<boolean>(false);
+
   const [toast, setToast] = useState<{ message: string; type: "success" | "error" | "info" } | null>(null);
 
   const showToast = (message: string, type: "success" | "error" | "info" = "success") => {
@@ -150,6 +159,11 @@ export default function App() {
   // Load from local storage on mount
   useEffect(() => {
     try {
+      const skipWelcome = localStorage.getItem("mindsync_skip_welcome");
+      if (skipWelcome === "true") {
+        setIsWelcomeOpen(false);
+      }
+
       const storedBattles = localStorage.getItem("mindsync_battles");
       const storedCheckIns = localStorage.getItem("mindsync_checkins");
       const storedSessions = localStorage.getItem("mindsync_sessions");
@@ -159,7 +173,14 @@ export default function App() {
       if (storedBattles) setBattles(JSON.parse(storedBattles));
       if (storedCheckIns) setCheckIns(JSON.parse(storedCheckIns));
       if (storedSessions) setSessions(JSON.parse(storedSessions));
-      if (storedSettings) setSettings(JSON.parse(storedSettings));
+
+      if (storedSettings) {
+        const parsedSettings = JSON.parse(storedSettings);
+        setSettings(parsedSettings);
+        if (parsedSettings.localPinLock) {
+          setIsAppLocked(true);
+        }
+      }
 
       if (storedMissions) {
         setMissions(JSON.parse(storedMissions));
@@ -171,6 +192,47 @@ export default function App() {
       console.error("Local Storage Hydration Failure:", err);
     }
   }, []);
+
+  // Self-reflection reminder interval scheduler
+  useEffect(() => {
+    const checkReminder = () => {
+      if (settings.dailyReminder === "disabled") return;
+      const now = new Date();
+      const hours = String(now.getHours()).padStart(2, "0");
+      const mins = String(now.getMinutes()).padStart(2, "0");
+      const currentTimeStr = `${hours}:${mins}`;
+
+      if (currentTimeStr === settings.dailyReminder) {
+        const todayStr = now.toISOString().split("T")[0];
+        const lastTriggered = localStorage.getItem("mindsync_last_reminder_date");
+        if (lastTriggered !== todayStr) {
+          localStorage.setItem("mindsync_last_reminder_date", todayStr);
+          // Haptic Vibration feedback when reminder time arrives
+          if (typeof navigator !== "undefined" && "vibrate" in navigator) {
+            try {
+              navigator.vibrate([300, 150, 300, 150, 400]);
+            } catch (e) {
+              console.warn("Vibration trigger error:", e);
+            }
+          }
+          if (typeof window !== "undefined" && "Notification" in window && Notification.permission === "granted") {
+            try {
+              new Notification("Mindsync Self-Reflection", {
+                body: "Time for your daily anxiety check-in & reflection!",
+              });
+            } catch (e) {
+              console.error("Notification trigger error:", e);
+            }
+          }
+          setIsReminderModalOpen(true);
+        }
+      }
+    };
+
+    checkReminder();
+    const interval = setInterval(checkReminder, 20000);
+    return () => clearInterval(interval);
+  }, [settings.dailyReminder]);
 
   // Sync to local storage
   const saveToStorage = (key: string, data: any) => {
@@ -332,6 +394,52 @@ export default function App() {
     localStorage.setItem("mindsync_missions", JSON.stringify(DEFAULT_MISSIONS));
   };
 
+  const handleUnlockPin = (inputPin: string): boolean => {
+    const validPin = settings.pinCode || "1234";
+    if (inputPin === validPin) {
+      setIsAppLocked(false);
+      showToast("App unlocked successfully", "success");
+      return true;
+    }
+    return false;
+  };
+
+  const handleSaveNewPin = (newPin: string) => {
+    const updated = { ...settings, pinCode: newPin, localPinLock: true };
+    setSettings(updated);
+    saveToStorage("mindsync_settings", updated);
+    setIsSettingPinOpen(false);
+    showToast("New 4-digit PIN code saved!", "success");
+  };
+
+  const handleLockAppNow = () => {
+    setIsAppLocked(true);
+    showToast("App locked. Enter PIN to unlock.", "info");
+  };
+
+  const handleTestReminder = () => {
+    if (typeof window !== "undefined" && "Notification" in window && Notification.permission === "granted") {
+      try {
+        new Notification("Mindsync Test Reminder", {
+          body: "This is a test self-reflection notification reminder!",
+        });
+      } catch (e) {
+        console.error("Notification trigger error:", e);
+      }
+    }
+    setIsReminderModalOpen(true);
+    showToast("Test self-reflection reminder triggered!", "info");
+  };
+
+  const handleEnterApp = (dontShowAgain?: boolean) => {
+    setIsWelcomeOpen(false);
+    if (dontShowAgain) {
+      localStorage.setItem("mindsync_skip_welcome", "true");
+    } else {
+      localStorage.removeItem("mindsync_skip_welcome");
+    }
+  };
+
   return (
     <div className="flex flex-col md:flex-row bg-[#0e1322] min-h-screen text-slate-100 font-sans overflow-hidden antialiased">
       {/* Mobile Top Header bar */}
@@ -345,13 +453,25 @@ export default function App() {
           </button>
           <MindsyncLogo iconSize={28} showSlogan={false} textSize="sm" />
         </div>
-        <button
-          onClick={() => setIsEmergencyOpen(true)}
-          className="px-4 py-2 bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 text-red-400 rounded-full text-xs font-black flex items-center gap-1.5 transition-all cursor-pointer"
-        >
-          <AlertOctagon className="w-3.5 h-3.5 animate-pulse text-red-400" />
-          <span>Emergency</span>
-        </button>
+
+        <div className="flex items-center gap-2">
+          {settings.localPinLock && (
+            <button
+              onClick={handleLockAppNow}
+              title="Lock App Now"
+              className="p-2 bg-slate-900 hover:bg-slate-800 border border-slate-700/80 text-slate-300 rounded-xl transition-all cursor-pointer"
+            >
+              <Lock className="w-4 h-4 text-[#57f1db]" />
+            </button>
+          )}
+          <button
+            onClick={() => setIsEmergencyOpen(true)}
+            className="px-4 py-2 bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 text-red-400 rounded-full text-xs font-black flex items-center gap-1.5 transition-all cursor-pointer"
+          >
+            <AlertOctagon className="w-3.5 h-3.5 animate-pulse text-red-400" />
+            <span>Emergency</span>
+          </button>
+        </div>
       </header>
 
       {/* Sidebar Command Center Panel */}
@@ -420,10 +540,6 @@ export default function App() {
             <AboutUsView />
           )}
 
-          {activeTab === "songs" && (
-            <ExhibitionSongsView />
-          )}
-
           {activeTab === "settings" && (
             <SettingsView
               settings={settings}
@@ -432,11 +548,21 @@ export default function App() {
               onImportData={handleImportData}
               onClearHistory={handleClearHistory}
               onOpenEmergency={() => setIsEmergencyOpen(true)}
+              onLockAppNow={handleLockAppNow}
+              onSetPin={() => setIsSettingPinOpen(true)}
+              onTestReminder={handleTestReminder}
+              onOpenWelcome={() => setIsWelcomeOpen(true)}
               showToast={showToast}
             />
           )}
         </div>
       </main>
+
+      {/* Intro Welcome Screen */}
+      <WelcomeScreen
+        isOpen={isWelcomeOpen}
+        onEnterApp={handleEnterApp}
+      />
 
       {/* Toast Notification Container */}
       <AnimatePresence>
@@ -481,6 +607,30 @@ export default function App() {
       <EmergencyModal
         isOpen={isEmergencyOpen}
         onClose={() => setIsEmergencyOpen(false)}
+      />
+
+      {/* PIN Lock Screen Modal */}
+      <PinLockModal
+        isOpen={isAppLocked}
+        onUnlock={handleUnlockPin}
+      />
+
+      {/* Set/Change PIN Code Modal */}
+      <PinLockModal
+        isOpen={isSettingPinOpen}
+        isSettingPin={true}
+        onUnlock={() => true}
+        onSaveNewPin={handleSaveNewPin}
+        onClose={() => setIsSettingPinOpen(false)}
+      />
+
+      {/* Self-Reflection Reminder Notification Banner Modal */}
+      <ReminderNotificationModal
+        isOpen={isReminderModalOpen}
+        reminderTime={settings.dailyReminder}
+        onClose={() => setIsReminderModalOpen(false)}
+        onNavigateToCheckIn={() => setActiveTab("checkin")}
+        onNavigateToMissions={() => setActiveTab("missions")}
       />
     </div>
   );

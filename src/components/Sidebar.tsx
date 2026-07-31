@@ -10,7 +10,6 @@ import {
   AlertOctagon,
   X,
   Users,
-  Youtube,
 } from "lucide-react";
 import MindsyncLogo from "./MindsyncLogo";
 
@@ -37,7 +36,6 @@ export default function Sidebar({
     { id: "missions", label: "Small Steps", icon: Compass },
     { id: "progress", label: "Progress Insights", icon: LineChart },
     { id: "about", label: "About Us", icon: Users },
-    { id: "songs", label: "Exhibition Songs", icon: Youtube },
     { id: "settings", label: "Settings", icon: Settings },
   ];
 

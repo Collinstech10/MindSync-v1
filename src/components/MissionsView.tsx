@@ -18,7 +18,8 @@ import {
   Check,
   Heart,
   TrendingUp,
-  AlertTriangle
+  AlertTriangle,
+  ArrowLeft
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { Mission } from "../types";
@@ -263,23 +264,23 @@ export default function MissionsView({
     <div className="space-y-8 animate-fade-in">
       
       {/* Upper Title Section */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 sm:gap-6">
         <div>
           <span className="text-xs uppercase tracking-widest text-[#57f1db] font-bold">
             Behavioral Shaping
           </span>
-          <h1 className="text-4xl font-extrabold tracking-tight text-white mt-1">
+          <h1 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-white mt-1">
             Small Steps
           </h1>
-          <p className="text-slate-400 mt-2 max-w-xl text-base leading-relaxed">
+          <p className="text-slate-400 mt-1 sm:mt-2 max-w-xl text-xs sm:text-base leading-relaxed">
             Practice small, steady actions against avoidance. Trying counts.
           </p>
         </div>
         
-        <div className="flex items-center gap-3 w-full md:w-auto">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 sm:gap-3 w-full sm:w-auto">
           <button
             onClick={() => setIsCreateOpen(true)}
-            className="flex-1 md:flex-initial px-6 py-3 rounded-full bg-gradient-to-r from-[#57f1db] to-cyan-500 text-slate-950 font-bold text-xs hover:scale-102 active:scale-98 transition-transform cursor-pointer flex items-center justify-center gap-2"
+            className="w-full sm:w-auto px-5 sm:px-6 py-3 rounded-full bg-gradient-to-r from-[#57f1db] to-cyan-500 text-slate-950 font-bold text-xs hover:scale-102 active:scale-98 transition-transform cursor-pointer flex items-center justify-center gap-2 min-h-[44px]"
           >
             <Plus className="w-4 h-4 text-slate-950 stroke-[3]" />
             <span>Create Small Step</span>
@@ -287,11 +288,15 @@ export default function MissionsView({
           
           <button
             onClick={() => {
-              // Scroll down to the list area or open first step
-              const el = document.getElementById("steps-list-anchor");
-              el?.scrollIntoView({ behavior: "smooth" });
+              if (filteredMissions.length > 0) {
+                handleOpenLogModal(filteredMissions[0]);
+              } else if (missions.length > 0) {
+                handleOpenLogModal(missions[0]);
+              } else {
+                setIsCreateOpen(true);
+              }
             }}
-            className="flex-1 md:flex-initial px-6 py-3 rounded-full border border-slate-800 bg-slate-900/40 hover:bg-slate-900 hover:border-slate-700 text-slate-300 font-bold text-xs transition-colors cursor-pointer"
+            className="w-full sm:w-auto px-5 sm:px-6 py-3 rounded-full border border-slate-800 bg-slate-900/40 hover:bg-slate-900 hover:border-slate-700 text-slate-300 font-bold text-xs transition-colors cursor-pointer flex items-center justify-center min-h-[44px]"
           >
             Log What Happened
           </button>
@@ -299,14 +304,14 @@ export default function MissionsView({
       </div>
 
       {/* Intro Card */}
-      <div className="bg-slate-900/40 border border-slate-800/80 rounded-3xl p-6 relative overflow-hidden">
+      <div className="bg-slate-900/40 border border-slate-800/80 rounded-2xl sm:rounded-3xl p-4 sm:p-6 relative overflow-hidden">
         <div className="absolute top-0 right-0 w-36 h-36 bg-[#57f1db]/5 blur-3xl rounded-full" />
-        <div className="flex items-start gap-4 z-10 relative">
-          <div className="rounded-2xl bg-cyan-500/10 p-3 text-[#57f1db] shrink-0">
-            <BookOpen className="w-6 h-6" />
+        <div className="flex items-start gap-3.5 sm:gap-4 z-10 relative">
+          <div className="rounded-xl sm:rounded-2xl bg-cyan-500/10 p-2.5 sm:p-3 text-[#57f1db] shrink-0 mt-0.5">
+            <BookOpen className="w-5 h-5 sm:w-6 sm:h-6" />
           </div>
           <div className="space-y-1">
-            <h3 className="font-bold text-white text-sm">Self-Directed Exposure Principle</h3>
+            <h3 className="font-bold text-white text-xs sm:text-sm">Self-Directed Exposure Principle</h3>
             <p className="text-xs text-slate-300 leading-relaxed">
               Small Steps are not about proving anything. They help you notice what anxiety predicted, what actually happened, and what you learned.
             </p>
@@ -315,66 +320,66 @@ export default function MissionsView({
       </div>
 
       {/* Statistics Insights Grid */}
-      <div className="grid grid-cols-2 lg:grid-cols-7 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 gap-2.5 sm:gap-4">
         {/* KPI: Planned */}
-        <div className="bg-slate-900/30 border border-slate-800/50 rounded-2xl p-4 flex flex-col justify-between">
+        <div className="bg-slate-900/30 border border-slate-800/50 rounded-xl sm:rounded-2xl p-3 sm:p-4 flex flex-col justify-between min-h-[85px]">
           <span className="text-[10px] font-mono uppercase text-slate-500 font-bold">Planned</span>
           <div>
-            <div className="text-2xl font-black text-white mt-1">{stepsPlanned}</div>
+            <div className="text-xl sm:text-2xl font-black text-white mt-1">{stepsPlanned}</div>
             <p className="text-[9px] text-slate-400 mt-0.5">Steps in queue</p>
           </div>
         </div>
 
         {/* KPI: Tried */}
-        <div className="bg-slate-900/30 border border-slate-800/50 rounded-2xl p-4 flex flex-col justify-between">
+        <div className="bg-slate-900/30 border border-slate-800/50 rounded-xl sm:rounded-2xl p-3 sm:p-4 flex flex-col justify-between min-h-[85px]">
           <span className="text-[10px] font-mono uppercase text-[#cebdff] font-bold">Tried It</span>
           <div>
-            <div className="text-2xl font-black text-white mt-1">{stepsTried}</div>
+            <div className="text-xl sm:text-2xl font-black text-white mt-1">{stepsTried}</div>
             <p className="text-[9px] text-slate-400 mt-0.5">Steady efforts</p>
           </div>
         </div>
 
         {/* KPI: Completed */}
-        <div className="bg-slate-900/30 border border-slate-800/50 rounded-2xl p-4 flex flex-col justify-between">
+        <div className="bg-slate-900/30 border border-slate-800/50 rounded-xl sm:rounded-2xl p-3 sm:p-4 flex flex-col justify-between min-h-[85px]">
           <span className="text-[10px] font-mono uppercase text-[#57f1db] font-bold">Completed</span>
           <div>
-            <div className="text-2xl font-black text-white mt-1">{stepsCompleted}</div>
+            <div className="text-xl sm:text-2xl font-black text-white mt-1">{stepsCompleted}</div>
             <p className="text-[9px] text-slate-400 mt-0.5">Steps finished</p>
           </div>
         </div>
 
         {/* KPI: Repeated */}
-        <div className="bg-slate-900/30 border border-slate-800/50 rounded-2xl p-4 flex flex-col justify-between">
+        <div className="bg-slate-900/30 border border-slate-800/50 rounded-xl sm:rounded-2xl p-3 sm:p-4 flex flex-col justify-between min-h-[85px]">
           <span className="text-[10px] font-mono uppercase text-cyan-400 font-bold">Repeated</span>
           <div>
-            <div className="text-2xl font-black text-white mt-1">{stepsRepeated}</div>
+            <div className="text-xl sm:text-2xl font-black text-white mt-1">{stepsRepeated}</div>
             <p className="text-[9px] text-slate-400 mt-0.5">Deepening habits</p>
           </div>
         </div>
 
         {/* KPI: Fear Before */}
-        <div className="bg-slate-900/30 border border-slate-800/50 rounded-2xl p-4 flex flex-col justify-between">
+        <div className="bg-slate-900/30 border border-slate-800/50 rounded-xl sm:rounded-2xl p-3 sm:p-4 flex flex-col justify-between min-h-[85px]">
           <span className="text-[10px] font-mono uppercase text-slate-400 font-bold">Fear Before</span>
           <div>
-            <div className="text-2xl font-black text-white mt-1">{averageFearBefore}</div>
-            <p className="text-[9px] text-slate-400 mt-0.5">Average out of 10</p>
+            <div className="text-xl sm:text-2xl font-black text-white mt-1">{averageFearBefore}</div>
+            <p className="text-[9px] text-slate-400 mt-0.5">Avg out of 10</p>
           </div>
         </div>
 
         {/* KPI: Fear After */}
-        <div className="bg-slate-900/30 border border-slate-800/50 rounded-2xl p-4 flex flex-col justify-between">
+        <div className="bg-slate-900/30 border border-slate-800/50 rounded-xl sm:rounded-2xl p-3 sm:p-4 flex flex-col justify-between min-h-[85px]">
           <span className="text-[10px] font-mono uppercase text-emerald-400 font-bold">Fear After</span>
           <div>
-            <div className="text-2xl font-black text-white mt-1">{averageFearAfter}</div>
-            <p className="text-[9px] text-slate-400 mt-0.5">Post-practice average</p>
+            <div className="text-xl sm:text-2xl font-black text-white mt-1">{averageFearAfter}</div>
+            <p className="text-[9px] text-slate-400 mt-0.5">Post-practice avg</p>
           </div>
         </div>
 
         {/* KPI: Top Category */}
-        <div className="bg-slate-900/30 border border-slate-800/50 rounded-2xl p-4 col-span-2 lg:col-span-1 flex flex-col justify-between">
+        <div className="bg-slate-900/30 border border-slate-800/50 rounded-xl sm:rounded-2xl p-3 sm:p-4 col-span-2 sm:col-span-3 lg:col-span-1 flex flex-col justify-between min-h-[85px]">
           <span className="text-[10px] font-mono uppercase text-slate-500 font-bold">Top Focus</span>
           <div>
-            <div className="text-xs font-bold text-[#57f1db] mt-1 truncate">{mostPracticedCategory}</div>
+            <div className="text-xs sm:text-sm font-bold text-[#57f1db] mt-1 truncate">{mostPracticedCategory}</div>
             <p className="text-[9px] text-slate-400 mt-0.5">Most active area</p>
           </div>
         </div>
@@ -414,23 +419,23 @@ export default function MissionsView({
               </div>
             </div>
 
-            <div className="border-t border-slate-800/60 pt-4 grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div className="border-t border-slate-800/60 pt-4 grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
               <div>
                 <span className="text-[10px] uppercase font-mono text-slate-500 font-bold">Step Target</span>
-                <p className="text-sm font-bold text-white mt-0.5 truncate">{activeResult.stepTitle}</p>
+                <p className="text-xs sm:text-sm font-bold text-white mt-0.5 truncate">{activeResult.stepTitle}</p>
               </div>
               <div>
                 <span className="text-[10px] uppercase font-mono text-slate-500 font-bold">Anxiety Shift</span>
-                <p className="text-sm font-bold text-white mt-0.5">
+                <p className="text-xs sm:text-sm font-bold text-white mt-0.5">
                   {activeResult.fearBefore}/10 → {activeResult.fearAfter}/10{" "}
-                  <span className={`text-xs ml-1 font-mono ${activeResult.change <= 0 ? "text-emerald-400" : "text-amber-400"}`}>
+                  <span className={`text-xs ml-0.5 font-mono ${activeResult.change <= 0 ? "text-emerald-400" : "text-amber-400"}`}>
                     ({activeResult.change <= 0 ? "" : "+"}{activeResult.change})
                   </span>
                 </p>
               </div>
               <div>
                 <span className="text-[10px] uppercase font-mono text-slate-500 font-bold">New Status</span>
-                <p className="text-xs font-bold text-[#cebdff] mt-1">{activeResult.status}</p>
+                <p className="text-xs font-bold text-[#cebdff] mt-1 truncate">{activeResult.status}</p>
               </div>
               <div>
                 <span className="text-[10px] uppercase font-mono text-slate-500 font-bold">Lesson Learned</span>
@@ -438,7 +443,7 @@ export default function MissionsView({
               </div>
             </div>
 
-            <div className="bg-slate-950/40 rounded-2xl p-4 text-xs leading-relaxed text-slate-300">
+            <div className="bg-slate-950/40 rounded-2xl p-3.5 sm:p-4 text-xs leading-relaxed text-slate-300">
               {activeResult.change > 0 ? (
                 <div className="flex items-start gap-2.5 text-amber-400">
                   <AlertTriangle className="w-5 h-5 shrink-0 mt-0.5 text-amber-400" />
@@ -463,68 +468,72 @@ export default function MissionsView({
       <div id="steps-list-anchor" className="space-y-6 pt-2">
         
         {/* Filters bar */}
-        <div className="flex flex-col md:flex-row gap-4 justify-between items-start md:items-center">
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="text-xs text-slate-500 font-mono uppercase tracking-wider font-semibold mr-2">
+        <div className="space-y-4">
+          <div className="space-y-2">
+            <span className="text-xs text-slate-500 font-mono uppercase tracking-wider font-semibold block">
               Category:
             </span>
-            <button
-              onClick={() => setSelectedCategory("All")}
-              className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all border cursor-pointer ${
-                selectedCategory === "All"
-                  ? "bg-[#57f1db]/15 border-[#57f1db]/30 text-[#57f1db]"
-                  : "bg-slate-950/20 border-slate-800 text-slate-400 hover:text-slate-300"
-              }`}
-            >
-              All
-            </button>
-            {CATEGORIES.map((cat) => (
+            <div className="flex items-center gap-1.5 overflow-x-auto pb-1.5 max-w-full no-scrollbar touch-pan-x">
               <button
-                key={cat}
-                onClick={() => setSelectedCategory(cat)}
-                className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all border cursor-pointer ${
-                  selectedCategory === cat
+                onClick={() => setSelectedCategory("All")}
+                className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all border cursor-pointer shrink-0 min-h-[36px] flex items-center justify-center ${
+                  selectedCategory === "All"
                     ? "bg-[#57f1db]/15 border-[#57f1db]/30 text-[#57f1db]"
                     : "bg-slate-950/20 border-slate-800 text-slate-400 hover:text-slate-300"
                 }`}
               >
-                {cat}
+                All
               </button>
-            ))}
+              {CATEGORIES.map((cat) => (
+                <button
+                  key={cat}
+                  onClick={() => setSelectedCategory(cat)}
+                  className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all border cursor-pointer shrink-0 min-h-[36px] flex items-center justify-center ${
+                    selectedCategory === cat
+                      ? "bg-[#57f1db]/15 border-[#57f1db]/30 text-[#57f1db]"
+                      : "bg-slate-950/20 border-slate-800 text-slate-400 hover:text-slate-300"
+                  }`}
+                >
+                  {cat}
+                </button>
+              ))}
+            </div>
           </div>
 
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="text-xs text-slate-500 font-mono uppercase tracking-wider font-semibold mr-2">
+          <div className="space-y-2">
+            <span className="text-xs text-slate-500 font-mono uppercase tracking-wider font-semibold block">
               Status:
             </span>
-            <button
-              onClick={() => setSelectedStatus("All")}
-              className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all border cursor-pointer ${
-                selectedStatus === "All"
-                  ? "bg-[#cebdff]/15 border-[#cebdff]/30 text-[#cebdff]"
-                  : "bg-slate-950/20 border-slate-800 text-slate-400 hover:text-slate-300"
-              }`}
-            >
-              All
-            </button>
-            {STATUS_OPTIONS.map((status) => (
+            <div className="flex items-center gap-1.5 overflow-x-auto pb-1.5 max-w-full no-scrollbar touch-pan-x">
               <button
-                key={status}
-                onClick={() => setSelectedStatus(status)}
-                className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all border cursor-pointer ${
-                  selectedStatus === status
+                onClick={() => setSelectedStatus("All")}
+                className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all border cursor-pointer shrink-0 min-h-[36px] flex items-center justify-center ${
+                  selectedStatus === "All"
                     ? "bg-[#cebdff]/15 border-[#cebdff]/30 text-[#cebdff]"
                     : "bg-slate-950/20 border-slate-800 text-slate-400 hover:text-slate-300"
                 }`}
               >
-                {status}
+                All
               </button>
-            ))}
+              {STATUS_OPTIONS.map((status) => (
+                <button
+                  key={status}
+                  onClick={() => setSelectedStatus(status)}
+                  className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all border cursor-pointer shrink-0 min-h-[36px] flex items-center justify-center ${
+                    selectedStatus === status
+                      ? "bg-[#cebdff]/15 border-[#cebdff]/30 text-[#cebdff]"
+                      : "bg-slate-950/20 border-slate-800 text-slate-400 hover:text-slate-300"
+                  }`}
+                >
+                  {status}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
 
         {/* Steps Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
           {filteredMissions.length > 0 ? (
             filteredMissions.map((step) => {
               const stars = Array.from({ length: 5 }, (_, i) => i < step.difficulty);
@@ -533,10 +542,10 @@ export default function MissionsView({
               return (
                 <div
                   key={step.id}
-                  className="bg-slate-900/30 border border-slate-800/80 rounded-3xl p-6 space-y-4 hover:border-slate-700/60 transition-all flex flex-col justify-between"
+                  className="bg-slate-900/30 border border-slate-800/80 rounded-2xl sm:rounded-3xl p-4 sm:p-6 space-y-4 hover:border-slate-700/60 transition-all flex flex-col justify-between"
                 >
                   <div className="space-y-3">
-                    <div className="flex justify-between items-start gap-2">
+                    <div className="flex flex-wrap justify-between items-start gap-2">
                       <span className="text-[10px] font-mono px-2.5 py-0.5 rounded-full bg-slate-850 text-slate-400 uppercase tracking-wider">
                         {step.category}
                       </span>
@@ -617,10 +626,10 @@ export default function MissionsView({
                     )}
                   </div>
 
-                  <div className="pt-4 border-t border-slate-850 flex justify-between items-center mt-4">
+                  <div className="pt-4 border-t border-slate-850 flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-2.5 mt-4">
                     <button
                       onClick={() => handleOpenLogModal(step)}
-                      className="px-4 py-2 rounded-full border border-slate-800 hover:border-slate-700 bg-slate-950/40 text-slate-300 hover:text-white text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5"
+                      className="px-4 py-2.5 rounded-full border border-slate-800 hover:border-slate-700 bg-slate-950/40 text-slate-300 hover:text-white text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 min-h-[40px]"
                     >
                       <Plus className="w-3.5 h-3.5 text-slate-400" />
                       <span>Log What Happened</span>
@@ -635,9 +644,9 @@ export default function MissionsView({
                         const updated = missions.map(m => m.id === step.id ? { ...m, status: nextStatus as any } : m);
                         onUpdateMissions(updated);
                       }}
-                      className="text-[10px] text-slate-500 hover:text-[#57f1db] font-mono flex items-center gap-1 transition-colors cursor-pointer"
+                      className="text-xs sm:text-[10px] text-slate-400 hover:text-[#57f1db] font-mono flex items-center justify-center gap-1 py-1.5 transition-colors cursor-pointer min-h-[36px]"
                     >
-                      <RefreshCw className="w-3 h-3" />
+                      <RefreshCw className="w-3.5 h-3.5 sm:w-3 sm:h-3" />
                       <span>Rotate Status</span>
                     </button>
                   </div>
@@ -681,17 +690,17 @@ export default function MissionsView({
       {/* MODAL 1: CREATE STEP FORM */}
       <AnimatePresence>
         {isCreateOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-md">
             <motion.div
               initial={{ opacity: 0, scale: 0.96 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.96 }}
-              className="relative w-full max-w-xl overflow-hidden rounded-3xl border border-slate-800 bg-slate-950 p-6 md:p-8 shadow-2xl space-y-6"
+              className="relative w-full max-w-xl max-h-[85vh] sm:max-h-[90vh] overflow-y-auto rounded-3xl border border-slate-800 bg-slate-950 p-4 sm:p-6 md:p-8 shadow-2xl space-y-5 my-auto shrink-0"
             >
               {/* Close Button */}
               <button
                 onClick={() => setIsCreateOpen(false)}
-                className="absolute top-5 right-5 rounded-full bg-slate-900 p-2 text-slate-400 hover:bg-slate-800 hover:text-white transition-colors cursor-pointer"
+                className="absolute top-4 right-4 sm:top-5 sm:right-5 rounded-full bg-slate-900 p-2 text-slate-400 hover:bg-slate-800 hover:text-white transition-colors cursor-pointer min-h-[36px] min-w-[36px] flex items-center justify-center"
               >
                 <X className="w-4.5 h-4.5" />
               </button>
@@ -704,7 +713,7 @@ export default function MissionsView({
               </div>
 
               {/* Form content */}
-              <form onSubmit={handleCreateStep} className="space-y-5">
+              <form onSubmit={handleCreateStep} className="space-y-4 sm:space-y-5">
                 {/* 1. Step Title */}
                 <div className="space-y-1.5">
                   <label className="text-xs font-bold text-slate-300 block">Step Title</label>
@@ -721,13 +730,13 @@ export default function MissionsView({
                 {/* 2. Category Chips */}
                 <div className="space-y-1.5">
                   <label className="text-xs font-bold text-slate-300 block">Category</label>
-                  <div className="flex flex-wrap gap-2">
+                  <div className="flex flex-wrap gap-1.5 sm:gap-2">
                     {CATEGORIES.map((cat) => (
                       <button
                         key={cat}
                         type="button"
                         onClick={() => setNewCategory(cat)}
-                        className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all border cursor-pointer ${
+                        className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all border cursor-pointer min-h-[36px] ${
                           newCategory === cat
                             ? "bg-[#57f1db]/15 border-[#57f1db]/30 text-[#57f1db]"
                             : "bg-slate-900 border-slate-800 text-slate-400 hover:text-slate-300"
@@ -756,13 +765,13 @@ export default function MissionsView({
                   {/* Difficulty Selector */}
                   <div className="space-y-1.5">
                     <label className="text-xs font-bold text-slate-300 block">Difficulty (1-5)</label>
-                    <div className="flex gap-1">
+                    <div className="flex gap-1.5">
                       {[1, 2, 3, 4, 5].map((num) => (
                         <button
                           key={num}
                           type="button"
                           onClick={() => setNewDifficulty(num)}
-                          className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all border cursor-pointer ${
+                          className={`flex-1 py-2.5 rounded-xl text-xs font-bold transition-all border cursor-pointer min-h-[40px] ${
                             newDifficulty === num
                               ? "bg-cyan-500/15 border-cyan-500/40 text-cyan-400"
                               : "bg-slate-900 border-slate-800 text-slate-400"
@@ -787,7 +796,7 @@ export default function MissionsView({
                         max="10"
                         value={newFearBefore}
                         onChange={(e) => setNewFearBefore(parseInt(e.target.value))}
-                        className="w-full h-1.5 bg-slate-900 rounded-lg appearance-none cursor-pointer accent-[#57f1db]"
+                        className="w-full h-2 bg-slate-900 rounded-lg appearance-none cursor-pointer accent-[#57f1db]"
                       />
                     </div>
                   </div>
@@ -824,7 +833,7 @@ export default function MissionsView({
                 {/* Save button */}
                 <button
                   type="submit"
-                  className="w-full py-3 bg-gradient-to-r from-[#57f1db] to-cyan-500 text-slate-950 font-bold text-xs rounded-full cursor-pointer hover:scale-101 transition-transform text-center flex items-center justify-center gap-1.5 mt-2"
+                  className="w-full py-3.5 bg-gradient-to-r from-[#57f1db] to-cyan-500 text-slate-950 font-bold text-xs rounded-full cursor-pointer hover:scale-101 transition-transform text-center flex items-center justify-center gap-1.5 mt-2 min-h-[44px]"
                 >
                   <Check className="w-4 h-4 text-slate-950 stroke-[3]" />
                   <span>Save Small Step</span>
@@ -835,65 +844,91 @@ export default function MissionsView({
         )}
       </AnimatePresence>
 
-      {/* MODAL 2: LOG WHAT HAPPENED FORM */}
+      {/* MODAL / DEDICATED FULL SCREEN 2: LOG WHAT HAPPENED FORM (REFLECTION LOGGER) */}
       <AnimatePresence>
         {activeLogStep && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md overflow-y-auto">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.96 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.96 }}
-              className="relative w-full max-w-2xl rounded-3xl border border-slate-800 bg-slate-950 p-6 md:p-8 shadow-2xl space-y-6 my-8"
-            >
-              {/* Close Button */}
-              <button
-                onClick={() => {
-                  setActiveLogStep(null);
-                  setIsBreathingActive(false);
-                }}
-                className="absolute top-5 right-5 rounded-full bg-slate-900 p-2 text-slate-400 hover:bg-slate-800 hover:text-white transition-colors cursor-pointer"
-              >
-                <X className="w-4.5 h-4.5" />
-              </button>
-
-              {/* Title Header */}
-              <div>
-                <span className="text-xs uppercase tracking-widest text-[#cebdff] font-bold">Reflection Logger</span>
-                <h2 className="text-xl font-bold text-white">Log What Happened</h2>
-                <p className="text-xs text-slate-400 mt-1">
-                  You do not need a perfect result. An honest reflection is progress.
-                </p>
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 12 }}
+            className="fixed inset-0 z-50 bg-slate-950 flex flex-col h-[100dvh] max-h-[100dvh] overflow-hidden text-slate-100"
+          >
+            {/* Top Header Bar */}
+            <header className="shrink-0 bg-slate-950 border-b border-slate-800/80 px-4 sm:px-6 py-3 flex items-center justify-between gap-4">
+              <div className="flex items-center gap-3">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setActiveLogStep(null);
+                    setIsBreathingActive(false);
+                  }}
+                  className="px-3 py-1.5 rounded-full bg-slate-900 border border-slate-800 hover:bg-slate-800 text-slate-300 hover:text-white transition-colors cursor-pointer text-xs font-bold flex items-center gap-1.5 min-h-[36px]"
+                >
+                  <ArrowLeft className="w-4 h-4 text-slate-400" />
+                  <span>Back to Steps</span>
+                </button>
+                <div>
+                  <span className="text-[10px] uppercase tracking-widest text-[#cebdff] font-bold block">Reflection Logger</span>
+                  <h1 className="text-sm sm:text-base font-bold text-white leading-tight">Log What Happened</h1>
+                </div>
               </div>
 
-              {/* Action Targets */}
-              <div className="bg-slate-900/50 rounded-2xl p-4 border border-slate-850/60 text-xs space-y-1">
-                <span className="text-[9px] font-mono uppercase text-slate-500 tracking-wider">Active Target Step:</span>
-                <h3 className="font-extrabold text-[#57f1db] text-sm">{activeLogStep.title}</h3>
-                <p className="text-slate-400 text-[11px] italic mt-1">"Anxiety predicted: {activeLogStep.prediction || "N/A"}"</p>
+              {/* Target Step Selector Dropdown if multiple steps exist */}
+              {missions.length > 0 && (
+                <div className="flex items-center gap-2">
+                  <span className="hidden sm:inline text-xs text-slate-400 font-medium">Step:</span>
+                  <select
+                    value={activeLogStep.id}
+                    onChange={(e) => {
+                      const selected = missions.find((m) => m.id === e.target.value);
+                      if (selected) handleOpenLogModal(selected);
+                    }}
+                    className="bg-slate-900 text-xs text-[#57f1db] font-bold border border-slate-800 rounded-lg px-3 py-1.5 focus:outline-none focus:border-[#57f1db] cursor-pointer max-w-[180px] sm:max-w-[260px] truncate"
+                  >
+                    {missions.map((m) => (
+                      <option key={m.id} value={m.id}>
+                        {m.title}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
+            </header>
+
+            {/* Main Content Area */}
+            <main className="flex-1 overflow-y-auto max-w-2xl w-full mx-auto px-4 sm:px-6 py-4 space-y-4">
+              
+              {/* Active Step Context Card */}
+              <div className="bg-slate-900/60 rounded-2xl p-4 border border-slate-800 space-y-1">
+                <span className="text-[10px] font-mono uppercase text-[#57f1db] tracking-wider font-bold">Active Step</span>
+                <h2 className="text-base sm:text-lg font-bold text-white">{activeLogStep.title}</h2>
+                {activeLogStep.prediction && (
+                  <p className="text-xs text-slate-400 italic">"Anxiety predicted: {activeLogStep.prediction}"</p>
+                )}
               </div>
 
-              {/* Form Reflection content */}
-              <form onSubmit={handleSaveReflection} className="space-y-5">
+              {/* Form Reflection Content */}
+              <form onSubmit={handleSaveReflection} className="space-y-4">
                 
-                {/* 1. Did you try this step? */}
-                <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-slate-300 block">Did you try this step?</label>
+                {/* 1. Status selector */}
+                <div className="space-y-2">
+                  <label className="text-xs font-bold text-slate-200 block">Did you try this step?</label>
                   <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
                     {[
                       { value: "Planned", label: "Not yet" },
                       { value: "Tried It", label: "Tried it" },
-                      { value: "Completed", label: "Completed it" },
-                      { value: "Skipped for Now", label: "Skipped for now" },
-                      { value: "Repeat This Step", label: "I want to repeat" }
+                      { value: "Completed", label: "Completed" },
+                      { value: "Skipped for Now", label: "Skipped" },
+                      { value: "Repeat This Step", label: "Repeat" }
                     ].map((opt) => (
                       <button
                         key={opt.value}
                         type="button"
                         onClick={() => setLogTrialStatus(opt.value)}
-                        className={`py-2 rounded-xl text-[10px] font-bold transition-all border cursor-pointer ${
+                        className={`py-2.5 px-2 rounded-xl text-xs font-bold transition-all border cursor-pointer min-h-[40px] flex items-center justify-center text-center ${
                           logTrialStatus === opt.value
-                            ? "bg-[#57f1db]/15 border-[#57f1db]/30 text-[#57f1db]"
-                            : "bg-slate-900 border-slate-800 text-slate-400"
+                            ? "bg-[#57f1db]/15 border-[#57f1db]/40 text-[#57f1db]"
+                            : "bg-slate-900 border-slate-800 text-slate-400 hover:text-slate-200 hover:bg-slate-850"
                         }`}
                       >
                         {opt.label}
@@ -902,105 +937,76 @@ export default function MissionsView({
                   </div>
                 </div>
 
-                {/* Grid for Slider & Breath Helper */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start pt-1">
-                  
-                  {/* 2. Fear After Slider */}
-                  <div className="space-y-3">
-                    <div className="flex justify-between items-center">
-                      <label className="text-xs font-bold text-slate-300 block">Anxiety Level AFTER practicing</label>
-                      <span className="font-mono text-xs font-bold text-cyan-400">{logFearAfter}/10</span>
+                {/* 2. Anxiety Slider & Grounding Breath Helper */}
+                <div className="bg-slate-900/70 rounded-2xl p-4 border border-slate-800 space-y-3">
+                  <div className="flex items-center justify-between gap-2">
+                    <div>
+                      <label className="text-xs font-bold text-slate-200 block">Anxiety Level AFTER practicing</label>
+                      <span className="text-[11px] text-slate-400">Rate tension scale from 1 (Calm) to 10 (Peak)</span>
                     </div>
-                    <div className="pt-2">
-                      <input
-                        type="range"
-                        min="1"
-                        max="10"
-                        value={logFearAfter}
-                        onChange={(e) => setLogFearAfter(parseInt(e.target.value))}
-                        className="w-full h-1.5 bg-slate-900 rounded-lg appearance-none cursor-pointer accent-cyan-400"
-                      />
-                    </div>
-                    <div className="flex justify-between text-[9px] font-mono text-slate-500">
-                      <span>1 = Relaxed Calm</span>
-                      <span>10 = Peak Tension</span>
-                    </div>
-                  </div>
-
-                  {/* Breathing / Grounding Mini Assist Tool */}
-                  <div className="bg-slate-900/40 rounded-2xl border border-slate-850 p-4 space-y-3 flex flex-col justify-between min-h-[110px]">
-                    <div className="flex justify-between items-center">
-                      <span className="text-[10px] font-mono uppercase text-[#cebdff] font-bold">Immediate Grounding Helper</span>
+                    <div className="flex items-center gap-3">
+                      <span className="font-mono text-sm font-bold text-cyan-400 bg-cyan-950/60 px-2.5 py-1 rounded-lg border border-cyan-800/40">
+                        {logFearAfter}/10
+                      </span>
                       <button
                         type="button"
                         onClick={toggleBreathing}
-                        className={`text-[10px] font-bold px-2.5 py-1 rounded-full transition-all cursor-pointer ${
-                          isBreathingActive ? "bg-red-500/20 text-red-400" : "bg-cyan-500/20 text-cyan-400"
+                        className={`text-xs font-bold px-3 py-1.5 rounded-full transition-all cursor-pointer border min-h-[32px] flex items-center gap-1.5 ${
+                          isBreathingActive 
+                            ? "bg-red-500/20 border-red-500/40 text-red-400" 
+                            : "bg-cyan-500/15 border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/25"
                         }`}
                       >
-                        {isBreathingActive ? "Pause Guide" : "Start Breath Guide"}
+                        <Heart className="w-3.5 h-3.5 text-cyan-400" />
+                        <span>{isBreathingActive ? `${breathPhase} (${breathSeconds}s)` : "Grounding Breath"}</span>
                       </button>
                     </div>
+                  </div>
+                  
+                  <input
+                    type="range"
+                    min="1"
+                    max="10"
+                    value={logFearAfter}
+                    onChange={(e) => setLogFearAfter(parseInt(e.target.value))}
+                    className="w-full h-2 bg-slate-950 rounded-lg appearance-none cursor-pointer accent-cyan-400"
+                  />
+                </div>
 
-                    {isBreathingActive ? (
-                      <div className="flex items-center gap-4 animate-fade-in py-1">
-                        {/* Little pulsing circle */}
-                        <div className="relative w-8 h-8 flex items-center justify-center">
-                          <motion.div
-                            animate={{
-                              scale: breathPhase === "Inhale" ? [1, 1.4] : breathPhase === "Hold" ? 1.4 : [1.4, 1]
-                            }}
-                            transition={{ duration: 4, ease: "easeInOut", repeat: Infinity }}
-                            className="absolute inset-0 rounded-full bg-cyan-500/20 blur-sm"
-                          />
-                          <div className="w-3.5 h-3.5 rounded-full bg-cyan-400 z-10" />
-                        </div>
-                        <div>
-                          <p className="text-xs text-white font-bold">{breathPhase}...</p>
-                          <p className="text-[10px] text-slate-400 font-mono">{breathSeconds} seconds remaining</p>
-                        </div>
-                      </div>
-                    ) : (
-                      <p className="text-[11px] text-slate-400 leading-relaxed">
-                        Heart racing or anxious? Take a 12-second mindful pause before typing your reflection.
-                      </p>
-                    )}
+                {/* 3. Text inputs: What happened & What did you learn */}
+                <div className="space-y-4">
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-bold text-slate-200 block">What actually happened?</label>
+                    <textarea
+                      rows={3}
+                      required
+                      value={logActuallyHappened}
+                      onChange={(e) => setLogActuallyHappened(e.target.value)}
+                      placeholder="Describe what happened in your trial..."
+                      className="w-full bg-slate-900 border border-slate-800 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-[#57f1db] resize-none"
+                    />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-bold text-slate-200 block">What did you learn?</label>
+                    <textarea
+                      rows={3}
+                      required
+                      value={logLearned}
+                      onChange={(e) => setLogLearned(e.target.value)}
+                      placeholder="What takeaway or insight did you gain?"
+                      className="w-full bg-slate-900 border border-slate-800 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-[#57f1db] resize-none"
+                    />
                   </div>
                 </div>
 
-                {/* 3. What actually happened? */}
-                <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-slate-300 block">What actually happened?</label>
-                  <textarea
-                    rows={2}
-                    required
-                    value={logActuallyHappened}
-                    onChange={(e) => setLogActuallyHappened(e.target.value)}
-                    placeholder="Describe what happened in a few words."
-                    className="w-full bg-slate-900 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-[#57f1db] resize-none"
-                  />
-                </div>
-
-                {/* 4. What did you learn? */}
-                <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-slate-300 block">What did you learn?</label>
-                  <textarea
-                    rows={2}
-                    required
-                    value={logLearned}
-                    onChange={(e) => setLogLearned(e.target.value)}
-                    placeholder="What did this step teach you?"
-                    className="w-full bg-slate-900 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-[#57f1db] resize-none"
-                  />
-                </div>
-
-                {/* 5. Next move */}
-                <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-slate-300 block">Your Next Move</label>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                {/* 4. Next move */}
+                <div className="space-y-2">
+                  <label className="text-xs font-bold text-slate-200 block">Your Next Move</label>
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                     {[
-                      { id: "Repeat this step", label: "Repeat this step" },
-                      { id: "Make it easier", label: "Make it easier" },
+                      { id: "Repeat this step", label: "Repeat step" },
+                      { id: "Make it easier", label: "Make easier" },
                       { id: "Try the next step", label: "Try next step" },
                       { id: "Pause for now", label: "Pause for now" }
                     ].map((move) => (
@@ -1008,10 +1014,10 @@ export default function MissionsView({
                         key={move.id}
                         type="button"
                         onClick={() => setLogNextMove(move.id)}
-                        className={`py-2 rounded-xl text-[10px] font-bold transition-all border cursor-pointer ${
+                        className={`py-2.5 px-2 rounded-xl text-xs font-bold transition-all border cursor-pointer min-h-[40px] flex items-center justify-center text-center ${
                           logNextMove === move.id
-                            ? "bg-[#cebdff]/15 border-[#cebdff]/30 text-[#cebdff]"
-                            : "bg-slate-900 border-slate-800 text-slate-400"
+                            ? "bg-[#cebdff]/15 border-[#cebdff]/40 text-[#cebdff]"
+                            : "bg-slate-900 border-slate-800 text-slate-400 hover:text-slate-200 hover:bg-slate-850"
                         }`}
                       >
                         {move.label}
@@ -1021,30 +1027,29 @@ export default function MissionsView({
                 </div>
 
                 {/* Action buttons */}
-                <div className="flex flex-col sm:flex-row justify-end gap-3 pt-4 border-t border-slate-900/60 mt-2">
+                <div className="pt-3 border-t border-slate-900 flex flex-col sm:flex-row items-center justify-end gap-3 pb-4">
                   <button
                     type="button"
                     onClick={() => {
-                      // Trigger breath guide and also prompt modal action
-                      toggleBreathing();
+                      setActiveLogStep(null);
+                      setIsBreathingActive(false);
                     }}
-                    className="px-6 py-3 rounded-full border border-slate-800 bg-slate-900/40 text-slate-300 font-bold text-xs hover:bg-slate-900 transition-colors cursor-pointer flex items-center justify-center gap-1.5"
+                    className="w-full sm:w-auto px-6 py-3 rounded-full border border-slate-800 bg-slate-900/40 text-slate-400 font-bold text-xs hover:bg-slate-900 hover:text-white transition-colors cursor-pointer text-center min-h-[44px]"
                   >
-                    <Heart className="w-4 h-4 text-cyan-400" />
-                    <span>Go to Calm Now</span>
+                    Cancel
                   </button>
 
                   <button
                     type="submit"
-                    className="px-6 py-3 rounded-full bg-gradient-to-r from-[#57f1db] to-cyan-500 text-slate-950 font-bold text-xs hover:scale-101 active:scale-99 transition-transform text-center flex items-center justify-center gap-1.5 cursor-pointer"
+                    className="w-full sm:w-auto px-8 py-3 bg-gradient-to-r from-[#57f1db] to-cyan-500 text-slate-950 font-bold text-xs rounded-full cursor-pointer hover:scale-101 active:scale-99 transition-transform text-center flex items-center justify-center gap-2 min-h-[44px]"
                   >
                     <CheckCircle2 className="w-4 h-4 text-slate-950" />
                     <span>Save Reflection</span>
                   </button>
                 </div>
               </form>
-            </motion.div>
-          </div>
+            </main>
+          </motion.div>
         )}
       </AnimatePresence>
     </div>
