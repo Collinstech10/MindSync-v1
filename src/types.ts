@@ -42,6 +42,7 @@ export interface AppSettings {
   gentleAnimations: boolean;
   dailyReminder: string;
   localPinLock: boolean;
+  pinCode?: string;
 }
 
 export interface SessionLog {
